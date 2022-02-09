@@ -1,0 +1,5 @@
+{
+    "port": 5000,
+    "jwtSecret": "rygach learn for live",
+    "mongoUri": "mongodb+srv://rygach:96H@fuzu@cluster0.2rxke.mongodb.net/app?retryWrites=true&w=majority"
+}
