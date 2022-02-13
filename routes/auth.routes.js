@@ -21,35 +21,36 @@ router.post('/register',
             .isLength({min: 6})
     ],
     async (req, res) => {
-    try {
-        // checking of data with importing methods
-        const errors = validationResult(req);
+        try {
+            console.log('Body', req.body);
+            // checking of data with importing methods
+            const errors = validationResult(req);
         
-        // if we get errors on validation, we are return error to frontend
-        if (!errors.isEmpty()) {
-            return res.status(400).json({
-                errors: errors.array(),
-                message: 'Неккоректные данные при регистрации'
-            })
-        }
+            // if we get errors on validation, we are return error to frontend
+            if (!errors.isEmpty()) {
+                return res.status(400).json({
+                    errors: errors.array(),
+                    message: 'Неккоректные данные при регистрации'
+                })
+            }
 
-        // get email and pass from request object
-        const { email, password } = req.body
-        
-        const candidate = await User.findOne({ email });
+            // get email and pass from request object
+            const { email, password } = req.body;
+            
+            const candidate = await User.findOne({ email });
 
-        if (candidate) {
-            return res.status(400).json({message: 'Такой пользователь уже существует'})
-        }
+            if (candidate) {
+                return res.status(400).json({ message: 'Такой пользователь уже существует' });
+            }
 
-        // encrypting entered password
-        const hashedPassword = await bcrypt.hash(password, 12);
-        // add new user with his data
-        const user = new User({ email, password: hashedPassword })
-        
-        await user.save();
+            // encrypting entered password
+            const hashedPassword = await bcrypt.hash(password, 12);
+            // add new user with his data
+            const user = new User({ email, password: hashedPassword });
+            
+            await user.save();
 
-        res.status(201).json({message: 'Пользователь создан'})
+            res.status(201).json({message: 'Пользователь создан'})
     } catch (e) {
         res.status(500).json({message: 'Что-то пошло не так, попробуйте снова'})
     }
@@ -62,8 +63,8 @@ router.post('/login',
     [
         check('email', 'Введите корректный email').normalizeEmail().isEmail(),
         // for logining, user must only having a password, we dont must to checking him
-        check('password', 'Введите пароль'), exists();
-    ]
+        check('password', 'Введите пароль').exists()
+    ],
     async (req, res) => {
     try {
         // checking of data with importing methods
